@@ -1,7 +1,7 @@
 [project]
 name = "tools-adoption"
 version = "0.1.0"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     # Orchestration
     "prefect>=3.7.5",
@@ -17,13 +17,14 @@ dependencies = [
     "pyarrow>=24.0.0",
     # DB
     "duckdb>=1.5.4",
-    "pandas-stubs~=3.0.3",
+    # Transformation
+    "dbt-core>=1.11.11",
+    "dbt-common>=1.38.0",
+    "dbt-duckdb>=1.10.1",
 ]
 
 [dependency-groups]
 dev = [
-    "dbt-core>=1.11.11",
-    "dbt-duckdb>=1.10.1",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "ruff>=0.15.18",
