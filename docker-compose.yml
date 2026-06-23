@@ -15,5 +15,20 @@ services:
     volumes:
       - prefect_data:/root/.prefect
 
+  prefect-agent:
+    image: prefecthq/prefect:3.7-python3.14
+    command: >
+      /bin/sh -c "
+      pip install pandas requests pygithub pypistats duckdb;
+      python pipeline/deploy.py"
+    depends_on:
+      - prefect-server
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+    volumes:
+      - .:/opt/prefect/project
+      - ./data:/data
+    working_dir: /opt/prefect/project
+
 volumes:
   prefect_data:
