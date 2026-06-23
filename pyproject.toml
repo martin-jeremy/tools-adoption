@@ -1,0 +1,30 @@
+[project]
+name = "tools-adoption"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    # Orchestration
+    "prefect>=3.7.5",
+    "prefect-docker>=0.7.2",
+    # API
+    "requests>=2.34.2",
+    "pygithub>=2.9.1",
+    "pypistats>=1.13.0",
+    "pyyaml>=6.0.3",
+    "python-dotenv>=1.2.2",
+    # Data Processing
+    "pandas>=3.0.3",
+    "pyarrow>=24.0.0",
+    # DB
+    "duckdb>=1.5.4",
+    "pandas-stubs~=3.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "dbt-core>=1.11.11",
+    "dbt-duckdb>=1.10.1",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.18",
+]
