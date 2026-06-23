@@ -1,0 +1,19 @@
+services:
+  # --- Database Storage ---
+  # We will use DuckDB in a shared volume for persistence
+  # and access from multiple services
+
+  # --- Orchestrator & Ingestion ---
+  prefect-server:
+    image: prefecthq/prefect:3.7-python3.14
+    command: prefect server start
+    ports:
+      - "4200:4200"
+    environment:
+      - PREFECT_API_URL=http://localhost:4200/api
+      - PREFECT_SERVER_API_HOST=0.0.0.0
+    volumes:
+      - prefect_data:/root/.prefect
+
+volumes:
+  prefect_data:
