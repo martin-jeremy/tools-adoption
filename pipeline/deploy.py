@@ -17,5 +17,5 @@ if __name__ == "__main__":
     # sans avoir besoin de reconstruire une image docker
     main_orchestrator.serve(
         name='main-orchestrator',
-        cron='0 4 * * *',
+        interval=21600 # chaque 6 heures
     )
