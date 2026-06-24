@@ -1,0 +1,7 @@
+tools_adoption:
+  outputs:
+    dev:
+      type: duckdb
+      path: '/data/analytics.db'
+      threads: 2
+  target: dev
