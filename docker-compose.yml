@@ -15,6 +15,7 @@ services:
     volumes:
       - prefect_data:/root/.prefect
 
+  # --- Data Pipeline and Transformation ---
   prefect-agent:
     image: prefecthq/prefect:3.7-python3.12
     command: >
@@ -29,6 +30,28 @@ services:
       - .:/opt/prefect/project
       - ./data:/data
     working_dir: /opt/prefect/project
+
+  # --- Data Visualization ---
+  superset:
+    build:
+      context: ./superset
+      dockerfile: Dockerfile
+    user: "root"
+    command: >
+      /bin/sh -c "
+      superset db upgrade;
+      superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@fab.org --password admin;
+      superset init;
+      /usr/bin/run-server.sh --host 0.0.0.0 --port 8088 --with-threads --reload --debugger"
+    ports:
+      - "8088:8088"
+    environment:
+      - SUPERSET_HOME=/app/superset_home
+      - SUPERSET_SECRET_KEY=normally-you-should-change-this
+      - SUPERSET_DEPENDENCIES=duckdb duckdb-engine
+    volumes:
+      - ./superset:/app/superset_home
+      - ./data:/data:rw
 
 volumes:
   prefect_data:
