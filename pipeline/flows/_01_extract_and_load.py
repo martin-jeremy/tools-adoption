@@ -48,7 +48,7 @@ def fetch_pypi_dl(package: str):
     logger = get_run_logger()
     logger.info(f"Fetching downloads for {package}")
     try:
-        url = f"https://pypistats.com/api/packages/{package}?days=1"
+        url = f"https://pypistats.com/api/packages/{package}"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
