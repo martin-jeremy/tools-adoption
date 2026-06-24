@@ -5,7 +5,7 @@ services:
 
   # --- Orchestrator & Ingestion ---
   prefect-server:
-    image: prefecthq/prefect:3.7-python3.14
+    image: prefecthq/prefect:3.7-python3.12
     command: prefect server start
     ports:
       - "4200:4200"
@@ -16,10 +16,10 @@ services:
       - prefect_data:/root/.prefect
 
   prefect-agent:
-    image: prefecthq/prefect:3.7-python3.14
+    image: prefecthq/prefect:3.7-python3.12
     command: >
       /bin/sh -c "
-      pip install pandas requests pygithub pypistats duckdb;
+      pip install dbt-duckdb duckdb prefect pandas requests pygithub pypistats;
       python pipeline/deploy.py"
     depends_on:
       - prefect-server
