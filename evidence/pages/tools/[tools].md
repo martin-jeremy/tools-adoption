@@ -1,3 +1,6 @@
+---
+full_width: true
+---
 
 ```sql daily
 SELECT * FROM tools_adoption.daily

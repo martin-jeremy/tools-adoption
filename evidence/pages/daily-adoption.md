@@ -1,5 +1,6 @@
 ---
 title: Daily Adoption
+full_width: true
 ---
 
 ```sql snapshot

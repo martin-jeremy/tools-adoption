@@ -1,9 +1,26 @@
 WITH overall AS (
     SELECT * FROM {{ ref('stg_analytics__raw') }}
+),
+github AS (
+    SELECT
+        tool_name,
+        tool_desc,
+        tool_url AS github_url
+    FROM overall
+    WHERE provider = 'Github'
+),
+pypi AS (
+    SELECT
+        tool_name,
+        tool_desc,
+        tool_url AS pypi_url
+    FROM overall
+    WHERE provider = 'PyPI Stats'
 )
 SELECT
-    provider AS Source,
-    tool_name AS Name,
-    tool_desc AS Description,
-    tool_url AS URL
-FROM overall
+    COALESCE(g.tool_name, p.tool_name)                  AS Name,
+    COALESCE(g.tool_desc, p.tool_desc)                  AS Description,
+    g.github_url                                         AS GitHub_URL,
+    p.pypi_url                                           AS PyPI_URL
+FROM github g
+FULL OUTER JOIN pypi p ON g.tool_name = p.tool_name

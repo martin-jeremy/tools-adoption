@@ -1,5 +1,6 @@
 ---
 title: Historical Adoption
+full_width: true
 ---
 
 

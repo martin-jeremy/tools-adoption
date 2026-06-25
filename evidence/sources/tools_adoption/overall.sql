@@ -1,0 +1,1 @@
+SELECT * FROM read_parquet('https://github.com/martin-jeremy/tools-adoption/releases/download/latest/fct_tools_adoption_overall.parquet')

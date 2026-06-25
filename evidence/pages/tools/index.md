@@ -1,13 +1,15 @@
 ---
 title: Details by Tools
-hide_toc: false
+full_width: true
 ---
 
 ```sql tool_list
-select name from tools_adoption.daily group by 1;
+select *, '/tools/' || Name as detailed_link from tools_adoption.overall;
 ```
 
-{#each tool_list as tool}
-- [{tool.Name}](/tools/{tool.Name})
-
-{/each}
+<DataTable data={tool_list} search=true>
+    <Column id=Name />
+    <Column id=Description />
+    <Column id=URL contentType="link" />
+    <Column id=detailed_link contentType="link" linkLabel="Details →" />
+ </DataTable>
