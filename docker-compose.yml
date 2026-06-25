@@ -26,6 +26,7 @@ services:
       - prefect-server
     environment:
       - PREFECT_API_URL=http://prefect-server:4200/api
+      - DBT_DUCKDB_PATH='/data/analytics.db'
     volumes:
       - .:/opt/prefect/project
       - ./data:/data

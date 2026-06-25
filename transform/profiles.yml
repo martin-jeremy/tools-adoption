@@ -2,6 +2,6 @@ tools_adoption:
   outputs:
     dev:
       type: duckdb
-      path: '/data/analytics.db'
+      path: "{{ env_var('DBT_DUCKDB_PATH', '../data/analytics.db') }}" # fallback for local development
       threads: 2
   target: dev
