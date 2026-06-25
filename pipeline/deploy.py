@@ -14,9 +14,14 @@ def main_orchestrator():
     dbt_clean()
 
 if __name__ == "__main__":
-    # .serve() permet d'exposer le flux en tant que service
-    # sans avoir besoin de reconstruire une image docker
-    main_orchestrator.serve(
-        name='main-orchestrator',
-        interval=21600 # chaque 6 heures
-    )
+    if os.getenv("CI"):
+        # la CI GitHub Action n'a pas besoin d'exposer un flux Prefect
+        # l'execution de main_orchestrator suffit
+        main_orchestrator()
+    else:
+        # .serve() permet d'exposer le flux en tant que service
+        # sans avoir besoin de reconstruire une image docker
+        main_orchestrator.serve(
+            name='main-orchestrator',
+            interval=43200 # chaque 12 heures
+        )
