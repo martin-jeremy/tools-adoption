@@ -1,4 +1,5 @@
 import duckdb
+import yaml
 import pandas as pd
 from prefect import flow, task
 from prefect.logging import get_run_logger
@@ -6,18 +7,11 @@ import requests
 from pathlib import Path
 
 DB_PATH = "data/analytics.db"
+CONFIG_PATH = "tools.yml"
 
-default_repos = {
-        'github': ['PrefectHQ/prefect',
-                   'dbt-labs/dbt-core',
-                   'slothflowlabs/duckle',
-                   'duckdb/duckdb',
-                   'astral-sh/uv'],
-        'pypi': ['prefect',
-                 'dbt-core',
-                 'duckdb',
-                 'fastapi']
-    }
+def load_config(path: str = CONFIG_PATH) -> dict:
+    """Charge la liste des outils à monitorer"""
+    return yaml.safe_load(Path(path).read_text())
 
 @task(name="github-stars", retries=3)
 def fetch_github_stars(repo: str):
@@ -33,7 +27,7 @@ def fetch_github_stars(repo: str):
         logger.error(f"Error fetching stars for {repo}: {e}")
         return None
     return {
-        "provider": "github",
+        "provider": "Github",
         "tool_name": data["name"],
         "tool_desc": data["description"],
         "tool_url": data["html_url"],
@@ -90,8 +84,8 @@ def ingestion_flow(repos: dict):
     """Fonction principale du flux"""
     logger = get_run_logger()
     logger.info("Starting data ingestion flow")
-    gh = repos["github"]
-    pypi = repos["pypi"]
+    gh = [ rep for rep in [gh['repo'] for gh in repos.get('github')] ]
+    pypi = [ pkg for pkg in [pypi['package'] for pypi in repos.get('pypi')] ]
 
     # Ingest
     try:
@@ -111,4 +105,4 @@ def ingestion_flow(repos: dict):
     logger.info("Data ingestion flow completed")
 
 if __name__ == "__main__":
-    ingestion_flow(default_repos)
+    ingestion_flow(load_config())
