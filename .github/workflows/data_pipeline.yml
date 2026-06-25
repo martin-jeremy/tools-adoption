@@ -1,4 +1,4 @@
-name: Pipeline
+name: Data Pipeline
 on:
   schedule:
     - cron: "0 */12 * * *"
