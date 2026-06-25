@@ -11,7 +11,7 @@ from pipeline.flows._02_transforms import dbt_flow, dbt_clean
 def main_orchestrator():
     ingestion_flow(load_config())
     dbt_flow()
-    dbt_clean()
+    # dbt_clean() for some reason, its unstable on CI and locally, work only within Docker where is a non-sense.
 
 if __name__ == "__main__":
     if os.getenv("CI"):
