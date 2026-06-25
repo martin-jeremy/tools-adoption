@@ -81,4 +81,4 @@ plugins:
 #    "@evidence-dev/motherduck": { }
 
   deployment:
-    basePath: /tools-adoption/evidence
+    basePath: /tools-adoption
