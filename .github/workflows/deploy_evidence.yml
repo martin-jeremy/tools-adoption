@@ -44,7 +44,7 @@ jobs:
 
       - name: Generate Source & Build
         env:
-          BASE_PATH: '/'${{ github.event.repository.name }}/evidence'
+         BASE_PATH: '/${{ github.event.repository.name || github.repository_name }}/evidence'
         working-directory: ./evidence
         run: | 
           npm run source
