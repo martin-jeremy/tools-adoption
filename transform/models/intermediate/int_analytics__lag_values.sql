@@ -10,6 +10,7 @@ SELECT
     metric_name AS 'Metrics',
     value AS 'Value',
     value - previous_value AS 'Evolution',
-    (value - previous_value) / value * 100 AS 'Evolution_Pct',
-    rn AS 'Rank'
+    concat(round((value - previous_value) / value, 2) * 100, '%') AS 'Evolution_Pct',
+    rn AS 'Rank',
+    collected_at
 FROM raw
