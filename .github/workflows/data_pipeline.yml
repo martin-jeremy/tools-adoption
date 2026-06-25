@@ -56,11 +56,6 @@ jobs:
           DBT_DUCKDB_PATH: "data/analytics.db"
         run: uv run python pipeline/export.py
 
-  upload-artifacts:
-    needs: run-pipeline
-    runs-on: ubuntu-latest
-
-    steps:
       # --- Upload DB ---
       - name: Upload artifacts to latest release
         env:
