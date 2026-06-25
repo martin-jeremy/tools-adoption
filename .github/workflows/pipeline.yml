@@ -39,6 +39,8 @@ jobs:
         env:
           CI: "true"
           PREFECT_API_URL: "" # on surcharge pour ne pas passer par Prefect
+          PREFECT_LOGGING_LEVEL: "WARNING"
+          PREFECT_EVENTS_ENABLED: "false"
           DBT_DUCKDB_PATH: "data/analytics.db"
           DBT_PROFILES_DIR: "transform/"
           DBT_PROJECT_DIR: "transform/"
