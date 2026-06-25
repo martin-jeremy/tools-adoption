@@ -1,6 +1,15 @@
 # Project specific
 data/
 superset/superset.db
+evidence/node_modules
+evidence/.evidence
+evidence/build
+evidence/.svelte-kit
+evidence/.env.*
+!evidence/.env.example
+.idea/
+superset/.local
+.user.yml
 
 
 # Byte-compiled / optimized / DLL files
