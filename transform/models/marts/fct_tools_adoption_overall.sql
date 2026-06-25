@@ -7,3 +7,4 @@ SELECT
     gh_url as Github_URL,
     pypi_url as PyPI_URL
 FROM overall
+ORDER BY tool_name

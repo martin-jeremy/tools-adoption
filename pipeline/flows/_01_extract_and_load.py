@@ -60,24 +60,69 @@ def fetch_pypi_dl(package: str):
     }
 
 @task(name="save-to-duckdb")
-def save_to_duckdb(data: dict):
-    """Sauvegarde les données brutes dans DuckDB"""
-    Path.mkdir(Path(DB_PATH).parent, exist_ok=True)
+def save_to_duckdb(data: dict | None):
+    if data is None:
+        get_run_logger().warning("Skipping None record")
+        return
+
+    Path(DB_PATH).parent.mkdir(exist_ok=True)
+
+    data['last_check_at'] = data['collected_at']
 
     with duckdb.connect(DB_PATH) as con:
         con.execute("""
         CREATE TABLE IF NOT EXISTS raw (
-            provider VARCHAR, 
-            tool_name VARCHAR, 
-            tool_desc VARCHAR, 
-            tool_url VARCHAR, 
-            metric_name VARCHAR, 
-            value INTEGER, 
-            collected_at TIMESTAMP)
+            provider      VARCHAR,
+            tool_name     VARCHAR,
+            tool_desc     VARCHAR,
+            tool_url      VARCHAR,
+            metric_name   VARCHAR,
+            value         INTEGER,
+            collected_at  TIMESTAMP,
+            last_check_at TIMESTAMP
+        )
         """)
-        con.execute("""
-        INSERT INTO raw VALUES ($provider, $tool_name, $tool_desc, $tool_url, $metric_name, $value, $collected_at)
-        """, data)
+
+        # Récupère la dernière valeur connue pour cet outil/métrique
+        last = con.execute("""
+            SELECT value FROM raw
+            WHERE provider = ?
+              AND tool_name = ?
+              AND metric_name = ?
+            ORDER BY collected_at DESC
+            LIMIT 1
+        """, [data['provider'], data['tool_name'], data['metric_name']]).fetchone()
+
+        if last is None or last[0] != data["value"]:
+            # Valeur nouvelle ou première insertion : INSERT complet
+            data["last_check_at"] = data["collected_at"]
+            con.execute("""
+            INSERT INTO raw VALUES (
+                $provider, $tool_name, $tool_desc, $tool_url,
+                $metric_name, $value, $collected_at, $last_check_at
+            )
+            """, data)
+        else:
+            # Valeur inchangée : UPDATE last_check_at sur la dernière ligne
+            con.execute(
+                """
+            UPDATE raw SET last_check_at = ?
+            WHERE provider = ?
+              AND tool_name = ?
+              AND metric_name = ?
+              AND collected_at = (
+                  SELECT MAX(collected_at) FROM raw
+                  WHERE provider = ?
+                    AND tool_name = ?
+                    AND metric_name = ?
+              )
+            """,
+                [
+                    [data["collected_at"]],
+                    [data["provider"], data["tool_name"], data["metric_name"]],
+                    [data["provider"], data["tool_name"], data["metric_name"]],
+                ],
+            )
 
 @flow(name="ingest-flow")
 def ingestion_flow(repos: dict):

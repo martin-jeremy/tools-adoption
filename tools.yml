@@ -4,8 +4,11 @@ github:
   - repo: dbt-labs/dbt-core
   - repo: PrefectHQ/prefect
   - repo: slothflowlabs/duckle
+  - repo: evidence-dev/evidence
 
 pypi:
   - package: duckdb
   - package: dbt-core
   - package: prefect
+  - package: fastapi
+  - package: meltano
