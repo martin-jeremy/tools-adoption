@@ -70,4 +70,5 @@ jobs:
             data/analytics.db \
             data/fct_tools_adoption_daily.parquet \
             data/fct_tools_adoption_history.parquet \
+            data/fct_tools_adoption_overall.parquet \
             --clobber
