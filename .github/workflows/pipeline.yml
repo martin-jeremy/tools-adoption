@@ -1,0 +1,67 @@
+name: Pipeline
+on:
+  schedule:
+    - cron "0 */12 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync
+
+      # --- Restauration DB depuis last release ---
+      - name: Restore DB
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          mkdir -p data
+          gh release download latest \
+          --pattern "analytics.db" \
+          --dir data \
+          --clobber || echo "No existing release found, starting from scratch"
+
+      # --- Run ---
+      - name: Run ingestion + dbt
+        env:
+          CI: "true"
+          PREFECT_API_URL: "" # on surcharge pour ne pas passer par Prefect
+          DBT_DUCKDB_PATH: "data/analytics.db"
+          DBT_PROFILES_DIR: "transform/"
+          DBT_PROJECT_DIR: "transform/"
+        run: uv run python pipeline/deploy.sh
+
+      # --- Export DB ---
+      - name: Export Parquet files
+        env:
+          DBT_DUCKDB_PATH: "data/analytics.db"
+        run: uv run python pipeline/export.py
+
+      # --- Upload DB ---
+      - name: Upload artifacts to latest release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          gh release create latest \
+          --title "Latest data" \
+          --notes "Automatically updated every 12 hours" \
+          --prerelease || true
+          
+          gh release upload latest \
+            data/analytics.db \
+            data/fct_tools_adoption_daily.parquet \
+            data/fct_tools_adoption_history.parquet \
+            --clobber

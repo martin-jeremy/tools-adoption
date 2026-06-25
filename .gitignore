@@ -1,3 +1,8 @@
+# Project specific
+data/
+superset/superset.db
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
