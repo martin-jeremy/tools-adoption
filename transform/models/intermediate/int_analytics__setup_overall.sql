@@ -18,7 +18,7 @@ pypi AS (
     WHERE provider = 'PyPI Stats'
 )
 SELECT
-    COALESCE(g.tool_name, p.tool_name) AS tool_name,,
+    COALESCE(g.tool_name, p.tool_name) AS tool_name,
     COALESCE(g.tool_desc, p.tool_desc) AS tool_desc,
     g.github_url AS gh_url,
     p.pypi_url AS pypi_url
