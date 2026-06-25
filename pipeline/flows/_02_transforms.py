@@ -31,4 +31,4 @@ def dbt_clean():
 
 if __name__ == "__main__":
     dbt_flow()
-    dbt_clean()
+    # dbt_clean() for some reason, its unstable on CI and locally, work only within Docker where is a non-sense.
