@@ -1,7 +1,7 @@
 name: Pipeline
 on:
   schedule:
-    - cron "0 */12 * * *"
+    - cron: "0 */12 * * *"
   workflow_dispatch:
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
           DBT_DUCKDB_PATH: "data/analytics.db"
           DBT_PROFILES_DIR: "transform/"
           DBT_PROJECT_DIR: "transform/"
-        run: uv run python pipeline/deploy.sh
+        run: uv run python pipeline/deploy.py
 
       # --- Export DB ---
       - name: Export Parquet files
