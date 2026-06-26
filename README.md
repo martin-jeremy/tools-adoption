@@ -1,4 +1,4 @@
-# tools-adoption : Adopt a Tool !
+# tools-adoption : Adopt a Tool!
 
 > A data pipeline that tracks Modern Data Stack tool adoption, built with that very same Modern Data Stack. Yes, it's recursive. No, it's not an accident.
 
