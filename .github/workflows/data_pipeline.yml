@@ -1,7 +1,7 @@
 name: Data Pipeline
 on:
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 */4 * * *"
   push:
     paths:
       - 'transform/**'

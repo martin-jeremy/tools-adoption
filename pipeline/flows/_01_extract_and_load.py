@@ -118,9 +118,9 @@ def save_to_duckdb(data: dict | None):
               )
             """,
                 [
-                    [data["collected_at"]],
-                    [data["provider"], data["tool_name"], data["metric_name"]],
-                    [data["provider"], data["tool_name"], data["metric_name"]],
+                    data["collected_at"],
+                    data["provider"], data["tool_name"], data["metric_name"],
+                    data["provider"], data["tool_name"], data["metric_name"]
                 ],
             )
 

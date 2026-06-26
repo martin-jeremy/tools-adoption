@@ -67,7 +67,7 @@ Every 12 hours, GitHub Actions collects **GitHub stars** and **PyPI downloads** 
 
 ## How it works
 
-```
+```shell
 GitHub API ─┐
             ├─► Prefect flow ─► DuckDB ─► dbt ─► Parquet ─► GitHub Release
 PyPI API  ──┘                                                      │
@@ -89,12 +89,12 @@ PyPI API  ──┘                                                      │
 
 ### dbt models
 
-```
+```shell
 sources.analytics.raw
   └── stg_analytics__raw                (view)
         └── int_analytics__lag_values   (view)  ← delta and % evolution via LAG()
-        |     ├── fct_tools_adoption_daily       (table) ← snapshot: latest value per tool
-        |     └── fct_tools_adoption_history     (table) ← full history for time series
+        │     ├── fct_tools_adoption_daily       (table) ← snapshot: latest value per tool
+        │     └── fct_tools_adoption_history     (table) ← full history for time series
         └── fct_tools_adoption_overall           (table) ← overview of all tools
 ```
 
