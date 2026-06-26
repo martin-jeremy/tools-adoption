@@ -1,3 +1,4 @@
+import os
 import duckdb
 import yaml
 import pandas as pd
@@ -8,6 +9,7 @@ from pathlib import Path
 
 DB_PATH = "data/analytics.db"
 CONFIG_PATH = "tools.yml"
+CI = os.getenv("CI", False)
 
 def load_config(path: str = CONFIG_PATH) -> dict:
     """Charge la liste des outils à monitorer"""
@@ -16,8 +18,9 @@ def load_config(path: str = CONFIG_PATH) -> dict:
 @task(name="github-stars", retries=3)
 def fetch_github_stars(repo: str):
     """Récupère le nombre de star d'un repos Github"""
-    logger = get_run_logger()
-    logger.info(f"Fetching stars for {repo}")
+    if not CI:
+        logger = get_run_logger()
+        logger.info(f"Fetching stars for {repo}")
     try:
         url = f"https://api.github.com/repos/{repo}"
         response = requests.get(url)
@@ -39,8 +42,9 @@ def fetch_github_stars(repo: str):
 @task(name="pypi-dl", retries=3)
 def fetch_pypi_dl(package: str):
     """Récupère le nombre de téléchargements d'un package PyPI"""
-    logger = get_run_logger()
-    logger.info(f"Fetching downloads for {package}")
+    if not CI:
+        logger = get_run_logger()
+        logger.info(f"Fetching downloads for {package}")
     try:
         url = f"https://pypistats.com/api/packages/{package}"
         response = requests.get(url)
@@ -127,8 +131,9 @@ def save_to_duckdb(data: dict | None):
 @flow(name="ingest-flow")
 def ingestion_flow(repos: dict):
     """Fonction principale du flux"""
-    logger = get_run_logger()
-    logger.info("Starting data ingestion flow")
+    if not CI:
+        logger = get_run_logger()
+        logger.info("Starting data ingestion flow")
     gh = [ rep for rep in [gh['repo'] for gh in repos.get('github')] ]
     pypi = [ pkg for pkg in [pypi['package'] for pypi in repos.get('pypi')] ]
 
@@ -138,16 +143,19 @@ def ingestion_flow(repos: dict):
         # save_to_duckdb.map(fetch_github_stars.map(gh))
         # save_to_duckdb.map(fetch_pypi_dl.map(pypi))
         for repo in gh:
-            logger.info(f"Fetching stars for {repo}")
+            if not CI:
+                logger.info(f"Fetching stars for {repo}")
             stats = fetch_github_stars(repo)
             save_to_duckdb(stats)
         for pkg in pypi:
-            logger.info(f"Fetching downloads for {pkg}")
+            if not CI:
+                logger.info(f"Fetching downloads for {pkg}")
             stats = fetch_pypi_dl(pkg)
             save_to_duckdb(stats)
     except Exception as e:
         logger.error(f"Error during data ingestion: {e}")
-    logger.info("Data ingestion flow completed")
+    if not CI:
+        logger.info("Data ingestion flow completed")
 
 if __name__ == "__main__":
     ingestion_flow(load_config())

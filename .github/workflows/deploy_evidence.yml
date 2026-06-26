@@ -1,8 +1,5 @@
 name: Deploy Evidence.app
 on:
-  workflow_run:
-    workflows: ["Data Pipeline"]
-    types: [completed]
   push:
     paths:
       - 'evidence/**'
