@@ -23,49 +23,12 @@ order by Value desc
 
 > A data pipeline that tracks Modern Data Stack tool adoption, built with that very same Modern Data Stack. Yes, it's recursive. No, it's not an accident.
 
-Every 12 hours, GitHub Actions collects **GitHub stars** and **PyPI downloads** for a set of tools, stores them in DuckDB, transforms them with dbt, and updates this dashboard. No server. No cost. Artifacts (`analytics.db` + Parquet files) live on a GitHub Release `latest` and are reloaded on every run.
-
----
-
-## Current Snapshot
-
-### GitHub Stars
-
-<BarChart
-  data={github_stars}
-  x=Name
-  y=Value
-  yAxisTitle="Stars"
-  swapXY=true
-/>
-
-<DataTable data={github_stars} rows=10>
-  <Column id=Name />
-  <Column id=Value title="Stars" fmt=num0 />
-  <Column id=Evolution title="Δ last run" fmt="+#,##0;-#,##0" />
-  <Column id=Evolution_Pct title="%" fmt="+0.00%;-0.00%" />
-</DataTable>
-
-### PyPI Downloads
-
-<BarChart
-  data={pypi_downloads}
-  x=Name
-  y=Value
-  yAxisTitle="Downloads"
-  swapXY=true
-/>
-
-<DataTable data={pypi_downloads} rows=10>
-  <Column id=Name />
-  <Column id=Value title="Downloads" fmt=num0 />
-  <Column id=Evolution title="Δ last run" fmt="+#,##0;-#,##0" />
-  <Column id=Evolution_Pct title="%" fmt="+0.00%;-0.00%" />
-</DataTable>
-
 ---
 
 ## How it works
+
+Every 4 hours, GitHub Actions collects **GitHub stars** and **PyPI downloads** for a set of tools, stores them in DuckDB, transforms them with dbt, and updates this dashboard. No server. No cost. Artifacts (`analytics.db` + Parquet files) live on a GitHub Release `latest` and are reloaded on every run.
+
 
 ```shell
 GitHub API ─┐
@@ -88,6 +51,8 @@ PyPI API  ──┘                                                      │
 | Persistence | GitHub Release `latest` | `analytics.db` + Parquet reloaded on every run |
 
 ### dbt models
+
+A modular **DAG** for clean lineage. **Staging** standardizes, **Intermediate** handles the growth logic, and **Marts** materializes the final tables for the dashboard.
 
 ```shell
 sources.analytics.raw
