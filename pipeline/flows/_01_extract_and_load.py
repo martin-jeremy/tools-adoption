@@ -7,6 +7,7 @@ from prefect.logging import get_run_logger
 import requests
 from pathlib import Path
 
+NOW = pd.Timestamp.now()
 DB_PATH = "data/analytics.db"
 CONFIG_PATH = "tools.yml"
 CI = os.getenv("CI", False)
@@ -36,7 +37,7 @@ def fetch_github_stars(repo: str):
         "tool_url": data["html_url"],
         "metric_name": "stars",
         "value": data["stargazers_count"],
-        "collected_at": pd.Timestamp.now()
+        "collected_at": NOW
     }
 
 @task(name="pypi-dl", retries=3)
@@ -60,7 +61,7 @@ def fetch_pypi_dl(package: str):
         "tool_url": data["metadata"]["home_page"],
         "metric_name": "downloads",
         "value": data["trend"][-1]['total_downloads'],
-        "collected_at": pd.Timestamp.now()
+        "collected_at": NOW
     }
 
 @task(name="save-to-duckdb")
