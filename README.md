@@ -92,8 +92,9 @@ The pipeline runs every 6 hours automatically. To trigger it manually from the P
 sources.analytics.raw
   └── stg_analytics__raw                (view)
         └── int_analytics__lag_values   (view)  ← delta and % evolution via LAG()
-              ├── fct_tools_adoption_daily       (table) ← snapshot: latest value per tool
-              └── fct_tools_adoption_history     (table) ← full history for time series
+        |     ├── fct_tools_adoption_daily       (table) ← snapshot: latest value per tool
+        |     └── fct_tools_adoption_history     (table) ← full history for time series
+        └── fct_tools_adoption_overall           (table) ← overview of all tools
 ```
 
 ### Why DuckDB as the primary storage?
@@ -117,6 +118,7 @@ In local file mode, DuckDB does not support concurrent writes. Ingestion is ther
 ## TODO
 
 - [ ] **Streamlit frontend** — connected to the same Release Parquet files, for an interactive view (filters, per-tool drill-down). The goal is a source-agnostic frontend layer: same data, renderer chosen by use case.
+- [ ] **Pydantic** — Data contract before ingestion.
 - [ ] **dbt tests** — `schema.yml` with non-null and consistency checks on marts.
 - [ ] **npm downloads** — track npm download counts for tools that also ship JS packages (dbt-osmosis, Evidence itself...).
 - [ ] **Alerting** — flag abnormal metric drops (e.g. -20% downloads in a single day).
